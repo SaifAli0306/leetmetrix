@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LeetMatrix</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>LeetMatrix</h1>
+    <p id="date"></p>
+
+    <div class="user-container">
+      <p>Enter your LeetCode username:</p>
+      <div class="input-user-container">
+        <input type="text" placeholder="username" id="user-name" />
+        <button id="search">Search</button>
+      </div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-box">
+        <div class="label-box">Easy</div>
+        <div class="circle" id="easy-circle"><span id="easy-percent">--%</span></div>
+        <div class="box-stat" id="easy-box">-- / --</div>
+      </div>
+      <div class="progress-box">
+        <div class="label-box orange">Medium</div>
+        <div class="circle orange" id="medium-circle"><span id="medium-percent">--%</span></div>
+        <div class="box-stat" id="medium-box">-- / --</div>
+      </div>
+      <div class="progress-box">
+        <div class="label-box red">Hard</div>
+        <div class="circle red" id="hard-circle"><span id="hard-percent">--%</span></div>
+        <div class="box-stat" id="hard-box">-- / --</div>
+      </div>
+    </div>
+
+    <div class="cards-row">
+      <div class="stat-card" id="total-solved">Total Solved: ---</div>
+      <div class="stat-card" id="ranking">Ranking: ---</div>
+      <div class="stat-card" id="contribution">Contribution: ---</div>
+    </div>
+
+    <div class="additional-info" id="more-data"></div>
+
+    <div class="submission-section">
+      <h3>Recent Submissions</h3>
+      <table id="submissions-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="contest-section">
+      <h3>Contest Info</h3>
+      <table id="contest-table">
+        <thead>
+          <tr>
+            <th>Contest</th>
+            <th>Rank</th>
+            <th>Score</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>
