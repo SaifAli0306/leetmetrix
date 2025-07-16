@@ -1,5 +1,4 @@
-// File: api/submissions.js
-
+// leetmetrix/api/submissions.js
 import axios from 'axios';
 
 export default async function handler(req, res) {
@@ -28,15 +27,11 @@ export default async function handler(req, res) {
   };
 
   try {
-    const response = await axios.post(
-      'https://leetcode.com/graphql',
-      query,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const response = await axios.post('https://leetcode.com/graphql', query, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
     const data = response.data.data.recentSubmissionList;
     res.status(200).json(data);
