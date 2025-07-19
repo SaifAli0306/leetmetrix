@@ -1,48 +1,53 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const today = new Date();
-  document.getElementById("date").textContent = today.toDateString();
+// ──────────────────────────────────────────────
+// LeetMatrix  –  index.js  (updated 2025‑07‑19)
+// ──────────────────────────────────────────────
 
+document.addEventListener("DOMContentLoaded", () => {
+  // show today’s date
+  document.getElementById("date").textContent = new Date().toDateString();
+
+  // click handler for the Search button
   document.getElementById("search").addEventListener("click", async () => {
     const username = document.getElementById("user-name").value.trim();
     if (!username) return alert("Please enter a username");
 
     try {
-      // 1. Fetch LeetCode Stats
-      const res = await fetch(`https://leetcode-stats-api.herokuapp.com/${username}`);
-      const data = await res.json();
+      /* 1️⃣  Main profile / progress stats  */
+      const statsRes = await fetch(`https://leetcode-stats-api.herokuapp.com/${username}`);
+      const stats = await statsRes.json();
 
-     if (data.status === "error") {
-  alert("User not found!");
-  return;
-}
-
+      if (stats.status === "error") {
+        alert("User not found!");
+        return;
       }
 
-      // 2. Update progress circles and stats
-      updateProgress("easy-circle", "easy-percent", data.easySolved, data.totalEasy);
-      updateProgress("medium-circle", "medium-percent", data.mediumSolved, data.totalMedium);
-      updateProgress("hard-circle", "hard-percent", data.hardSolved, data.totalHard);
+      // update progress rings
+      updateProgress("easy-circle", "easy-percent", stats.easySolved,   stats.totalEasy);
+      updateProgress("medium-circle", "medium-percent", stats.mediumSolved, stats.totalMedium);
+      updateProgress("hard-circle", "hard-percent", stats.hardSolved,   stats.totalHard);
 
-      document.getElementById("easy-box").innerText = `${data.easySolved}/${data.totalEasy}`;
-      document.getElementById("medium-box").innerText = `${data.mediumSolved}/${data.totalMedium}`;
-      document.getElementById("hard-box").innerText = `${data.hardSolved}/${data.totalHard}`;
+      // numeric boxes
+      document.getElementById("easy-box").innerText   = `${stats.easySolved}/${stats.totalEasy}`;
+      document.getElementById("medium-box").innerText = `${stats.mediumSolved}/${stats.totalMedium}`;
+      document.getElementById("hard-box").innerText   = `${stats.hardSolved}/${stats.totalHard}`;
 
-      document.getElementById("total-solved").innerText = `Total Solved: ${data.totalSolved}`;
-      document.getElementById("ranking").innerText = `Ranking: ${data.ranking}`;
-      document.getElementById("contribution").innerText = `Contribution: ${data.contributionPoints}`;
+      // cards
+      document.getElementById("total-solved").innerText = `Total Solved: ${stats.totalSolved}`;
+      document.getElementById("ranking").innerText      = `Ranking: ${stats.ranking}`;
+      document.getElementById("contribution").innerText = `Contribution: ${stats.contributionPoints}`;
 
+      // extra info
       document.getElementById("more-data").innerHTML = `
-        <p><strong>Recent Submission Stats:</strong> ${data.recentSubmissions?.length || 'N/A'}</p>
-        <p><strong>Acceptance Rate:</strong> ${data.acceptanceRate || 'N/A'}%</p>
-        <p><strong>Reputation:</strong> ${data.reputation || 0}</p>
+        <p><strong>Acceptance Rate:</strong> ${stats.acceptanceRate}%</p>
+        <p><strong>Reputation:</strong> ${stats.reputation}</p>
       `;
 
-      // 3. Fetch Real Recent Submissions from Vercel-Hosted API
-      const submissionRes = await fetch(`https://leetmetrix.vercel.app/api/submissions?username=${username}`);
-      const realSubmissions = await submissionRes.json();
+      /* 2️⃣  Recent submissions from YOUR Vercel backend  */
+      const subRes = await fetch(`https://leetmetrix.vercel.app/api/submissions?username=${username}`);
+      const submissions = await subRes.json();
 
       const tbody = document.querySelector("#submissions-table tbody");
-      tbody.innerHTML = realSubmissions.slice(0, 5).map(sub => `
+      tbody.innerHTML = submissions.slice(0, 5).map(sub => `
         <tr>
           <td>${sub.title}</td>
           <td>${sub.statusDisplay}</td>
@@ -50,32 +55,31 @@ document.addEventListener("DOMContentLoaded", () => {
         </tr>
       `).join("");
 
-      // 4. Simulated Contest Data
+      /* 3️⃣  (Optional) simulated contest data */
       const contests = [
-        { name: "Weekly Contest 400", rank: 512, score: 380, date: "2024-06-01" },
-        { name: "Biweekly Contest 120", rank: 210, score: 450, date: "2024-05-18" }
+        { name: "Weekly Contest 400", rank: 512, score: 380, date: "2024‑06‑01" },
+        { name: "Biweekly Contest 120", rank: 210, score: 450, date: "2024‑05‑18" }
       ];
-
       const contestTbody = document.querySelector("#contest-table tbody");
-      contestTbody.innerHTML = contests.map(contest => `
+      contestTbody.innerHTML = contests.map(c => `
         <tr>
-          <td>${contest.name}</td>
-          <td>${contest.rank}</td>
-          <td>${contest.score}</td>
-          <td>${contest.date}</td>
+          <td>${c.name}</td>
+          <td>${c.rank}</td>
+          <td>${c.score}</td>
+          <td>${c.date}</td>
         </tr>
       `).join("");
 
-    } catch (error) {
-      alert("Error fetching data. Please check username or try again later.");
-      console.error(error);
+    } catch (err) {
+      console.error(err);
+      alert("Network error – please try again later.");
     }
   });
 
-  // 🔧 Update circular progress visual and percent text
+  /* 🔧 helper to update circular progress ring & percent label */
   function updateProgress(circleId, percentId, solved, total) {
-    const percent = total === 0 ? 0 : ((solved / total) * 100).toFixed(1);
-    document.getElementById(circleId).style.setProperty("--progress", `${percent}%`);
-    document.getElementById(percentId).innerText = `${percent}%`;
+    const pct = total ? ((solved / total) * 100).toFixed(1) : 0;
+    document.getElementById(circleId).style.setProperty("--progress", `${pct}%`);
+    document.getElementById(percentId).innerText = `${pct}%`;
   }
 });
